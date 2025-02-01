@@ -4,7 +4,7 @@ from pytorch_grad_cam.utils.image import show_cam_on_image
 from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
 from PIL import Image
 from tqdm import tqdm
-from datasets import *
+# from datasets import *
 import pickle
 import matplotlib.cm as cmap
 from utils import *
@@ -58,7 +58,7 @@ def get_cam_obj(model, target_layer, mtype, camtype='gradcam'):
         reshape_transform = lambda x : x
     
     if camtype == 'gradcam':
-        cam = GradCAM(model=model, target_layers=[target_layer], use_cuda=True, reshape_transform=reshape_transform)
+        cam = GradCAM(model=model, target_layers=[target_layer], reshape_transform=reshape_transform)
     elif camtype == 'scorecam':
         cam = ScoreCAM(model=model, target_layers=[target_layer], use_cuda=True, reshape_transform=reshape_transform)
 
@@ -185,7 +185,7 @@ def eval():
                     continue
                 if dset_name not in results[ft][mkey]:
                     model, target_layer = get_model(mkey, dset_name, ft)
-                    dset = get_dset(dset_name, ft)
+                    dset = get_dset(dset_name, ft=False)
 
                     results[ft][mkey][dset_name] = compute_salient_alignment_scores(dset, model, target_layer, mkey)
                     cache_results('ious_and_delta_densities', results)
@@ -225,7 +225,7 @@ def view_bad_examples(dset_name='hard_imagenet', mkey='timm_deit_small_patch16_2
     all_results = load_cached_results('ious_and_delta_densities')
     d = all_results[ft][mkey][dset_name][0 if metric =='iou' else 1]
     # we'll need to get the original instances that had bad gradcam iou
-    dset = get_dset(dset_name, ft)
+    dset = get_dset(dset_name, ft=True)
     # we'll need to regenerate the gradcams
     model, target_layer = get_model(mkey, dset_name, ft)
     cam = get_cam_obj(model, target_layer, mtype=mkey)

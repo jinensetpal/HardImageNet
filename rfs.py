@@ -3,10 +3,13 @@ import torch
 from torchvision import transforms, models
 import timm
 from utils import *
-from datasets import *
+# from datasets import *
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from finetuner import FineTuner
+
+from src.data.hard_imagenet import Dataset
+from src.utils import DataLoader
 
 def l2_normalize(X):
     flat_X = X.flatten(1)
@@ -19,8 +22,8 @@ def compute_rfs(noisy_fg_acc, noisy_bg_acc):
     return 0 if (avg == 1 or avg == 0) else (noisy_bg_acc - noisy_fg_acc) / (2*min(avg, 1-avg))
 
 def noisy_fg_bg_accs(model, dset_name='hard_imagenet', noise_sigma=0.25, apply_norm=True, l2=False, ft=False, trials=3):
-    dset = HardImageNet(ft=ft) if dset_name == 'hard_imagenet' else RIVAL10(ft=ft, twenty=('20' in dset_name))
-    loader = torch.utils.data.DataLoader(dset, batch_size=36, shuffle=True, num_workers=8, pin_memory=True)
+    dset = Dataset(ft=True, device='cpu') if dset_name == 'hard_imagenet' else RIVAL10(ft=ft, twenty=('20' in dset_name))
+    loader = DataLoader(dset, batch_size=36, shuffle=True, num_workers=8, pin_memory=True)
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 
     cnt_by_class, noisy_fg_cc_by_class, noisy_bg_cc_by_class = dict(), dict(), dict()
@@ -74,6 +77,7 @@ def noisy_fg_bg_accs(model, dset_name='hard_imagenet', noise_sigma=0.25, apply_n
     noisy_fg_acc, noisy_bg_acc = [np.average(list(x.values())) for x in [noisy_fg_acc_by_class, noisy_bg_acc_by_class]]
 
     # core_acc, spur_acc = [100. * x / total_cnt for x in [total_core_cc, total_spur_cc]]
+    # print(core_acc, spur_acc)
     rfs = compute_rfs(noisy_fg_acc, noisy_bg_acc)
     return rfs, noisy_fg_acc, noisy_bg_acc, noisy_fg_acc_by_class, noisy_bg_acc_by_class
 

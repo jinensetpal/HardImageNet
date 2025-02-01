@@ -7,10 +7,13 @@ import numpy as np
 import pickle
 from PIL import Image
 import os
-from datasets import *
+# from datasets import *
 import timm
 from torchvision import transforms, models
 from finetuner import *
+
+
+from src.data.hard_imagenet import Dataset
 
 def save_uri_as_img(uri, fpath='tmp.png', remove_fourth_channel_and_binarize=False):
     ''' saves raw mask and returns it as an image'''
@@ -85,7 +88,7 @@ def load_cached_results(results_key):
 
 def get_dset(dset_name, ft, bs=32, split='val'):
     if dset_name == 'hard_imagenet':
-        dset = HardImageNet(ft=ft, split=split)
+        dset = Dataset(ft=ft, split=split, device='cpu')
     elif dset_name == 'rival10':
         dset = RIVAL10(ft=ft, split=split)
     elif dset_name == 'rival20':

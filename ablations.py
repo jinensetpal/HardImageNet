@@ -6,7 +6,10 @@ from tqdm import tqdm
 from torchvision import models, transforms
 from utils import *
 import timm
-from datasets import *
+# from datasets import *
+
+from src.data.hard_imagenet import Dataset
+
 '''
 We implement multiple methods for ablating away the segmented object.
 '''
@@ -228,7 +231,7 @@ def compute_ablated_accs():
                             finetuner = FineTuner(dset_name=dset_name, mtype=mkey); finetuner.restore_model()
                             model = finetuner.model
                         if dset_name == 'hard_imagenet':
-                            dset = HardImageNet(ft=ft)
+                            dset = Dataset(ft=ft)
                         if dset_name == 'rival10':
                             dset = RIVAL10(ft=ft)
                         if dset_name == 'rival20':

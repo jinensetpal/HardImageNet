@@ -22,7 +22,7 @@ def compute_rfs(noisy_fg_acc, noisy_bg_acc):
     return 0 if (avg == 1 or avg == 0) else (noisy_bg_acc - noisy_fg_acc) / (2*min(avg, 1-avg))
 
 def noisy_fg_bg_accs(model, dset_name='hard_imagenet', noise_sigma=0.25, apply_norm=True, l2=False, ft=False, trials=3):
-    dset = Dataset(ft=True, device='cpu') if dset_name == 'hard_imagenet' else RIVAL10(ft=ft, twenty=('20' in dset_name))
+    dset = Dataset(ft=True, device='cpu', eval_mode=True) if dset_name == 'hard_imagenet' else RIVAL10(ft=ft, twenty=('20' in dset_name))
     loader = DataLoader(dset, batch_size=36, shuffle=True, num_workers=8, pin_memory=True)
     normalize = transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
 

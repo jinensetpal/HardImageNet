@@ -7,7 +7,6 @@ import sys
 
 from src import const
 
-from src.data.hard_imagenet import Dataset
 from src.model.arch import Model
 
 '''
@@ -32,7 +31,7 @@ def load_supplemental_model(ft=False):
     '''
     name = sys.argv[1]
 
-    model = Model(is_contrastive='default' not in name, logits_only=True, disable_bn='no_bn' in name)
+    model = Model(is_contrastive='default' not in name, logits_only=True, disable_bn='no_bn' in name, hardinet_eval=True)
     model.load_state_dict(torch.load(const.MODELS_DIR / f'{name}.pt', map_location=const.DEVICE, weights_only=True))
     model.name = name
     model.eval()

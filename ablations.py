@@ -231,7 +231,7 @@ def compute_ablated_accs():
                             finetuner = FineTuner(dset_name=dset_name, mtype=mkey); finetuner.restore_model()
                             model = finetuner.model
                         if dset_name == 'hard_imagenet':
-                            dset = Dataset(ft=ft)
+                            dset = Dataset(ft=ft, eval_mode=True)
                         if dset_name == 'rival10':
                             dset = RIVAL10(ft=ft)
                         if dset_name == 'rival20':

@@ -88,7 +88,7 @@ def load_cached_results(results_key):
 
 def get_dset(dset_name, ft, bs=32, split='val'):
     if dset_name == 'hard_imagenet':
-        dset = Dataset(ft=ft, split=split, device='cpu')
+        dset = Dataset(ft=ft, split=split, device='cpu', eval_mode=True)
     elif dset_name == 'rival10':
         dset = RIVAL10(ft=ft, split=split)
     elif dset_name == 'rival20':
@@ -107,4 +107,4 @@ def get_model(mkey, dset_name, ft):
         finetuner = FineTuner(dset_name=dset_name, mtype=mkey); finetuner.restore_model(); finetuner.turn_on_grad()
         model = finetuner.model
         target_layer = finetuner.gradcam_layer
-    return model, target_layer 
+    return model, target_layer

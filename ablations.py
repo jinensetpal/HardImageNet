@@ -195,7 +195,7 @@ def eval_under_ablation(model, ablation, dset, bs=32, shuffle=True):
     for img, mask, label in tqdm(loader):
         ablated_img = ablation(img, mask)
         ablated_img, label = [x.cuda() for x in [ablated_img, label]]
-        ablated_img = normalize(ablated_img).float()
+        # ablated_img = normalize(ablated_img).float()
         logits = model(ablated_img)
         cc += (logits.argmax(1) == label).sum() 
         ctr += img.shape[0] if bs > 1 else 1

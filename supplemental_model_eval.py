@@ -40,7 +40,7 @@ def load_supplemental_model(ft=False):
     return model, model.backbone.layer4[-1].conv3
 
 ### Noise based analysis: RFS
-def eval_rfs(model, dset_name='hard_imagenet', sigma=0.25, l2=False, ft=False, apply_norm=True):
+def eval_rfs(model, dset_name='hard_imagenet', sigma=0.25, l2=False, ft=False, apply_norm=False):
     rfs, noisy_fg_acc, noisy_bg_acc, noisy_fg_acc_by_class, noisy_bg_acc_by_class = \
                                 noisy_fg_bg_accs(model, dset_name, sigma, apply_norm, l2, ft)
     print(dset_name, rfs, noisy_fg_acc, noisy_bg_acc)
@@ -62,7 +62,7 @@ def eval_ablations(model, dset_name='hard_imagenet', ft=False):
         acc, confidences = eval_under_ablation(model, ab, dset, bs)
         results_dict[ab_name] = dict({'acc': acc, 'confidences': confidences})
         # print(len(confidences))
-        print(dset_name, acc, np.average(confidences))
+        print(dset_name, acc, np.average(confidences), ab_name)
     return results_dict
 
 ###### analysis for appendix/rebutttal
@@ -82,7 +82,7 @@ def eval_supplementary_models():
         # else:
         results[mkey][dset_name] = dict()
         # noise based analysis
-        results[mkey][dset_name]['rfs'] = eval_rfs(model, dset_name=dset_name, apply_norm=('clip' not in mkey))
+        results[mkey][dset_name]['rfs'] = eval_rfs(model, dset_name=dset_name, apply_norm=False)
         # ablation analysis
         results[mkey][dset_name]['ablation'] = eval_ablations(model, dset_name=dset_name)
         # saliency analysis

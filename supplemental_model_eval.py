@@ -1,7 +1,7 @@
-from rfs import *
-from saliency_analysis import *
-from ablations import *
-from finetuner import *
+from .rfs import *
+from .saliency_analysis import *
+from .ablations import *
+from .finetuner import *
 
 import sys
 
@@ -86,7 +86,7 @@ def eval_supplementary_models():
         results[mkey][dset_name]['ablation'] = eval_ablations(model, dset_name=dset_name)
         # saliency analysis
         results[mkey][dset_name]['saliency'] = eval_saliency_iou(model, target_layer, dset_name=dset_name, mtype=mkey)
-        cache_results(results_path, results)
+        # cache_results(results_path, results)
 
 def print_latex_table_supplementary_models():
     results = load_cached_results('supplemental_models_eval')

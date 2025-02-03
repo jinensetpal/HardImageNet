@@ -10,7 +10,7 @@ import os
 # from datasets import *
 import timm
 from torchvision import transforms, models
-from finetuner import *
+from .finetuner import *
 
 
 from src.data.hard_imagenet import Dataset

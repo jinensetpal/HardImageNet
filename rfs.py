@@ -2,11 +2,11 @@ import numpy as np
 import torch
 from torchvision import transforms, models
 import timm
-from utils import *
+from .utils import *
 # from datasets import *
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-from finetuner import FineTuner
+from .finetuner import FineTuner
 
 from src.data.hard_imagenet import Dataset
 from src.utils import DataLoader

@@ -4,7 +4,7 @@ import scipy
 from scipy import ndimage
 from tqdm import tqdm
 from torchvision import models, transforms
-from utils import *
+from .utils import *
 import timm
 # from datasets import *
 

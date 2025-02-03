@@ -7,9 +7,9 @@ from tqdm import tqdm
 # from datasets import *
 import pickle
 import matplotlib.cm as cmap
-from utils import *
+from .utils import *
 import timm
-from finetuner import FineTuner
+from .finetuner import FineTuner
 from torchvision import models, transforms
 import os
 #### UTILS

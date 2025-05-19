@@ -8,6 +8,7 @@ import sys
 from src import const
 
 from src.model.arch import Model
+from src.utils import configure
 
 '''
 A reviewer requested evaluating additional pretrained models. We do so here.
@@ -31,8 +32,9 @@ def load_supplemental_model(ft=False):
     '''
     name = sys.argv[1]
 
-    model = Model(is_contrastive='default' not in name, logits_only=True, disable_bn='no_bn' in name, hardinet_eval=True)
-    model.load_state_dict(torch.load(const.MODELS_DIR / f'{name}.pt', map_location=const.DEVICE, weights_only=True))
+    configure(name)
+    model = Model(is_contrastive='default' not in name, logits_only=True, return_logits=True)
+    model.load_state_dict(torch.load(const.DOWNSTREAM_MODELS_DIR / f'{name}.pt', map_location=const.DEVICE, weights_only=True))
     model.name = name
     model.eval()
 
@@ -41,14 +43,15 @@ def load_supplemental_model(ft=False):
 ### Noise based analysis: RFS
 def eval_rfs(model, dset_name='hard_imagenet', sigma=0.25, l2=False, ft=False, apply_norm=False):
     rfs, noisy_fg_acc, noisy_bg_acc, noisy_fg_acc_by_class, noisy_bg_acc_by_class = \
-                                noisy_fg_bg_accs(model, dset_name, sigma, apply_norm, l2, ft)
-    print(dset_name, rfs, noisy_fg_acc, noisy_bg_acc)
+                                noisy_fg_bg_accs(model, dset_name, sigma, apply_norm, l2, True)
+    print(dset_name, rfs, noisy_fg_acc, noisy_bg_acc, sigma)
     return rfs
 
 ### Saliency analysis: IoU
 def eval_saliency_iou(model, target_layer, mtype, dset_name='hard_imagenet', ft=False):
     dset = get_dset(dset_name, ft=True)
     ious, delta_densities = compute_salient_alignment_scores(dset, model, target_layer, mtype)
+    print(dset_name, np.mean(list(ious.values())), 'saliency iou')
     return ious
 
 ### Ablation analysis
@@ -82,6 +85,7 @@ def eval_supplementary_models():
         results[mkey][dset_name] = dict()
         # noise based analysis
         results[mkey][dset_name]['rfs'] = eval_rfs(model, dset_name=dset_name, apply_norm=False)
+        results[mkey][dset_name]['rfs'] = eval_rfs(model, dset_name=dset_name, sigma=0.5, apply_norm=False)
         # ablation analysis
         results[mkey][dset_name]['ablation'] = eval_ablations(model, dset_name=dset_name)
         # saliency analysis

@@ -33,12 +33,12 @@ def load_supplemental_model(ft=False):
     name = sys.argv[1]
 
     configure(name)
-    model = Model(is_contrastive='default' not in name, logits_only=True, return_logits=True)
+    model = Model(is_contrastive=True, logits_only=True, return_logits=True)
     model.load_state_dict(torch.load(const.DOWNSTREAM_MODELS_DIR / f'{name}.pt', map_location=const.DEVICE, weights_only=True))
     model.name = name
     model.eval()
 
-    return model, model.backbone.layer4[-1].conv3
+    return model, model.backbone.layer4[-1].conv3 if 'tinyback' not in name else model.backbone[-3]
 
 ### Noise based analysis: RFS
 def eval_rfs(model, dset_name='hard_imagenet', sigma=0.25, l2=False, ft=False, apply_norm=False):

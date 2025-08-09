@@ -88,7 +88,7 @@ def load_cached_results(results_key):
 
 def get_dset(dset_name, ft, bs=32, split='val'):
     if dset_name == 'hard_imagenet':
-        dset = Dataset(ft=ft, split=split, device='cpu', eval_mode=True)
+        dset = Dataset(ft=ft, split=split, class_subset=True, device='cpu', eval_mode=True)
     elif dset_name == 'rival10':
         dset = RIVAL10(ft=ft, split=split)
     elif dset_name == 'rival20':
